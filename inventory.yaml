@@ -1,0 +1,35 @@
+# Inventaire du TP infractl : six hôtes (palier 1).
+# Champs : name, address, port, group, check (tcp ou http), path (http uniquement, / par défaut)
+hosts:
+  - name: web-1
+    address: 127.0.0.1
+    port: 8080
+    group: web
+    check: http
+  - name: web-2
+    address: 127.0.0.1
+    port: 8080
+    group: web
+    check: tcp
+  - name: api-1
+    address: 127.0.0.1
+    port: 8081
+    group: api
+    check: http
+    path: /health
+  - name: api-2
+    address: 127.0.0.1
+    port: 8081
+    group: api
+    check: http
+    path: /status
+  - name: lent-1
+    address: 127.0.0.1
+    port: 8082
+    group: lent
+    check: http
+  - name: db-1
+    address: 127.0.0.1
+    port: 5432
+    group: db
+    check: tcp
