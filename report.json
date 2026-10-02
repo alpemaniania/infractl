@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-02T13:57:10",
+  "results": [
+    {
+      "host": "web-1",
+      "status": "OK",
+      "check": "http",
+      "ms": 3
+    },
+    {
+      "host": "web-2",
+      "status": "OK",
+      "check": "tcp",
+      "ms": 14
+    },
+    {
+      "host": "api-1",
+      "status": "OK",
+      "check": "http",
+      "ms": 1003
+    },
+    {
+      "host": "api-2",
+      "status": "OK",
+      "check": "http",
+      "ms": 1020
+    },
+    {
+      "host": "lent-1",
+      "status": "KO",
+      "check": "http",
+      "error": "timeout"
+    },
+    {
+      "host": "db-1",
+      "status": "KO",
+      "check": "tcp",
+      "error": "timeout"
+    }
+  ]
+}

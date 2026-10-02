@@ -1,4 +1,6 @@
 from pathlib import Path
+import json
+from datetime import datetime
 import logging
 import socket
 import time
@@ -131,7 +133,11 @@ def lister(group: str = ""):
 
 
 @app.command()
-def check(group: str = "", dry_run: bool = False):
+def check(
+    group: str = "",
+    dry_run: bool = False,
+    output: str = ""
+):
     hosts = charger("inventory.yaml")
 
     if dry_run:
@@ -157,33 +163,79 @@ def check(group: str = "", dry_run: bool = False):
         raise typer.Exit()
 
     ko = False
+    resultats = []
 
     for h in hosts:
-        if group != "" and h["group"] != group:
-            continue
+
+        if group != "":
+            if h["group"] != group:
+                continue
 
         resultat = verifier(h)
 
-        if resultat["status"] == "OK":
+        resultats.append(resultat)
+
+        statut = resultat["status"]
+
+        if statut == "OK":
+            nom = resultat["host"]
+            check_type = resultat["check"]
+            temps = resultat["ms"]
+
             print(
-                resultat["host"],
+                nom,
                 "OK",
-                resultat["check"],
-                resultat["ms"],
+                check_type,
+                temps,
                 "ms"
             )
+
         else:
+            nom = resultat["host"]
+            check_type = resultat["check"]
+            erreur = resultat["error"]
+
             print(
-                resultat["host"],
+                nom,
                 "KO",
-                resultat["check"],
-                resultat["error"]
+                check_type,
+                erreur
             )
 
             ko = True
 
+    if output != "":
+        rapport = {}
+
+        maintenant = datetime.now()
+        date_maintenant = maintenant.isoformat(
+            timespec="seconds"
+        )
+
+        rapport["date"] = date_maintenant
+
+        liste_resultats = resultats
+        rapport["results"] = liste_resultats
+
+        texte = json.dumps(
+            rapport,
+            indent=2,
+            ensure_ascii=False
+        )
+
+        fichier_sortie = Path(output)
+
+        fichier_sortie.write_text(
+            texte,
+            encoding="utf-8"
+        )
+
+        message = "rapport écrit dans " + output
+        logging.info(message)
+
     if ko:
-        raise typer.Exit(code=1)
+        code_erreur = 1
+        raise typer.Exit(code=code_erreur)
 
 
 if __name__ == "__main__":
